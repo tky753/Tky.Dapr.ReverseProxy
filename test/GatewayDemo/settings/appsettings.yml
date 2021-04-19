@@ -1,0 +1,21 @@
+Serilog:
+  MinimumLevel:
+    Default: Debug
+#    Override:
+#      Microsoft: Warning
+  WriteTo:
+    - Name: Console
+Yarp:
+  Routes:
+    - RouteId: r-module-master
+      ClusterId: dapr-sidecar
+      Match:
+        Path: api/service-sample/{**catch-all}
+      Metadata:
+        Dapr: method
+#  Clusters:
+#    dapr-sidecar:
+#      Destinations:
+#        d1:
+#          Address: dapr-port-"
+        

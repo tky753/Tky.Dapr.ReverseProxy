@@ -1,0 +1,14 @@
+﻿{
+  "profiles": {
+    "GatewayDemo": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:43245",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DAPR_HTTP_PORT": "63903"
+      }
+    }
+  }
+}

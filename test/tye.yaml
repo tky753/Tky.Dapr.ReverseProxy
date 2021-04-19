@@ -1,0 +1,40 @@
+# tye application configuration file
+# read all about it at https://github.com/dotnet/tye
+#
+# when you've given us a try, we'd love to know what you think:
+#    https://aka.ms/AA7q20u
+#
+name: dapr-yarp.sample
+extensions:
+  - name: dapr
+    components-path: "./components/"
+    config: dapr-config
+    exclude-placement-container: true
+    placement-port: 6050
+  - name: zipkin
+services:
+  - name: gateway-demo
+    project: ./GatewayDemo/GatewayDemo.csproj
+  #    bindings:
+  #      - port: 44362
+  #        name: p6d-gateway-1
+  #        protocol: http
+  #      - port: 44363
+  #        name: p6d-gateway-2
+  #        protocol: https
+  - name: service-sample
+    project: ./ServiceSample/ServiceSample.csproj
+  - name: zipkin
+    external: true
+    bindings:
+      - name: http
+        port: 9411
+ingress:
+  - name: ingress
+    rules:
+      - service: gateway-demo
+        path: /
+    bindings:
+      - name: ingress
+        protocol: https
+        port: 44363
