@@ -5,14 +5,14 @@ Serilog:
 #      Microsoft: Warning
   WriteTo:
     - Name: Console
-Yarp:
-  Routes:
-    - RouteId: r-module-master
-      ClusterId: dapr-sidecar
-      Match:
-        Path: api/service-sample/{**catch-all}
-      Metadata:
-        Dapr: method
+#Yarp:
+#  Routes:
+#    - RouteId: r-module-master
+#      ClusterId: dapr-sidecar
+#      Match:
+#        Path: api/{**catch-all}
+#      Metadata:
+#        Dapr: method
 #  Clusters:
 #    dapr-sidecar:
 #      Destinations:

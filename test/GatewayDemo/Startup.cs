@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -10,6 +11,7 @@ namespace GatewayDemo
 {
     public class Startup
     {
+        private const string DefaultCorsPolicyName = "Default";
         private readonly IConfiguration _configuration;
 
         public Startup(IConfiguration configuration)
@@ -20,8 +22,21 @@ namespace GatewayDemo
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddReverseProxy()
-                .LoadFromConfig(_configuration.GetSection("Yarp"))
+                .LoadFromConfig(_configuration.GetSection(DaprYarpConst.SectionKey))
                 .AddTransforms<DaprTransformProvider>();
+            
+            services.AddCors(options =>
+            {
+                options.AddPolicy(DefaultCorsPolicyName, builder =>
+                {
+                    builder
+                        .SetIsOriginAllowedToAllowWildcardSubdomains()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        .SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
+                });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -32,7 +47,7 @@ namespace GatewayDemo
             }
 
             app.UseRouting();
-
+            app.UseCors(DefaultCorsPolicyName);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapReverseProxy();

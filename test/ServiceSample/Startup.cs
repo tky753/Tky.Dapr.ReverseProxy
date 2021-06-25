@@ -17,10 +17,13 @@ namespace ServiceSample
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvcCore().AddApiExplorer();
+            services.AddHttpContextAccessor();
+            services.AddMvcCore().AddApiExplorer().AddNewtonsoftJson();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Asa.Abp.Demo.WebApi", Version = "v1"});
+                if(Environment.GetEnvironmentVariable("DAPR_HTTP_PORT") != null)
+                    c.DocumentFilter<SwaggerDaprPrefixFilter>();
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "ServiceSample", Version = "v1"});
             });
         }
 
@@ -32,8 +35,19 @@ namespace ServiceSample
                 app.UseDeveloperExceptionPage();
             }
             
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ServiceSample v1"));
+            app.UseSwagger(c =>
+            {
+                // c.PreSerializeFilters.Add((swagger, httpReq) =>
+                // {
+                //     swagger.Servers.Clear();
+                //     swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://localhost:44363/api/service-sample" } };
+                // });
+            });
+            app.UseSwaggerUI(c =>
+            {
+                // c.RoutePrefix = "swagger";
+                c.SwaggerEndpoint("v1/swagger.json", "ServiceSample v1");
+            });
 
             app.UseRouting();
 
